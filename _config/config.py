@@ -5,12 +5,6 @@ from datetime import datetime as dt
 from logging import getLogger, Formatter
 from .encrypter import Enc
 
-def get_date_str_ymd():
-    return dt.now().strftime('%Y%m%d')
-
-def get_date_str_ymdhms():    
-    return dt.now().strftime('%Y/%m/%d %H:%M:%S')
-
 class config:
     __enc = Enc()
     def __init__(self,delimita=":::",):
@@ -113,3 +107,9 @@ class config:
             self.logger.error(text)
         elif species == "CRITICAL":
             self.logger.critical(text)
+    
+    def get_date_str_ymd(self):
+        return dt.now().strftime('%Y%m%d')
+    
+    def get_date_str_ymdhms(self):    
+        return dt.now().strftime('%Y/%m/%d %H:%M:%S')

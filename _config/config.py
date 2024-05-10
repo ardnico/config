@@ -1,10 +1,9 @@
 
-from .encrypter import Enc
 import os
-from getpass import getpass
-from datetime import datetime as dt
 import logging
-from logging import getLogger, StreamHandler, Formatter
+from datetime import datetime as dt
+from logging import getLogger, Formatter
+from .encrypter import Enc
 
 def get_date_str_ymd():
     return dt.now().strftime('%Y%m%d')
@@ -16,7 +15,7 @@ class config:
     __enc = Enc()
     def __init__(self,delimita=":::",):
         self.data = {
-        "loglevel"  :50,
+        "loglevel"  :0,
         "encrypt"   :0,
         "workdir"   :0,
         "data_path" : f"{os.getcwd()}\\data",
@@ -24,12 +23,12 @@ class config:
         }
         self.delimita = delimita
         self.setting_path = os.path.join(self.data['data_path'] , "setting.data")
-        self.logger = getLogger(__name__)
         self.log_name = os.path.join(self.data['log_path'],__name__+".log")
         os.makedirs(self.data['data_path'],exist_ok=True)
         os.makedirs(self.data['log_path'],exist_ok=True)
         self.read_key()
         # set loglevel
+        self.logger = getLogger(__name__)
         self.logger.setLevel(self.data['loglevel'])
         # Streamハンドラクラスをインスタンス化
         st_handler = logging.StreamHandler()
@@ -38,7 +37,8 @@ class config:
         # Logフォーマットを設定
         handler_format = Formatter('[ %(levelname)s %(asctime)s] %(message)s')
         st_handler.setFormatter(handler_format)
-        # インスタンス化したハンドラをそれぞれログ太郎に渡す
+        fl_handler.setFormatter(handler_format)
+        # インスタンス化したハンドラをそれぞれログに渡す
         self.logger.addHandler(st_handler)
         self.logger.addHandler(fl_handler)
     
@@ -73,7 +73,7 @@ class config:
         self.write_data()
     
     def write_data(self):
-        tmp_data = f"KEY{self.delimita}VALUE\n"
+        tmp_data = f'"KEY"{self.delimita}"VALUE"\n'
         for key in self.data.keys():
             tmp_data += f'"{key}"{self.delimita}"' + str(self.data[key]) + '"\n'
         open(self.setting_path,"w",encoding="utf-8").write(tmp_data)
@@ -113,4 +113,3 @@ class config:
             self.logger.error(text)
         elif species == "CRITICAL":
             self.logger.critical(text)
-    

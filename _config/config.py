@@ -37,10 +37,10 @@ class config:
         fl_handler = logging.FileHandler(filename=self.log_name, encoding="utf-8")
         # Logフォーマットを設定
         handler_format = Formatter('[ %(levelname)s %(asctime)s] %(message)s')
+        st_handler.setFormatter(handler_format)
         # インスタンス化したハンドラをそれぞれログ太郎に渡す
         self.logger.addHandler(st_handler)
         self.logger.addHandler(fl_handler)
-        self.logger.setFormatter(handler_format)
     
     def read_key(self):
         if os.path.exists(self.setting_path)==False:

@@ -7,20 +7,22 @@ from .encrypter import Enc
 
 class config:
     __enc = Enc()
-    def __init__(self,delimita=":::",):
+    def __init__(self,delimita=":::",name=__name__,):
         self.data = {
         "loglevel"  :0,
         "encrypt"   :0,
-        "workdir"   :0,
+        "work_dir"   :0,
         "data_path" : f"{os.getcwd()}\\data",
         "log_path" : f"{os.getcwd()}\\log",
         }
         self.delimita = delimita
         self.setting_path = os.path.join(self.data['data_path'] , "setting.data")
-        self.log_name = os.path.join(self.data['log_path'],__name__+".log")
+        self.log_name = os.path.join(self.data['log_path'],name+".log")
         os.makedirs(self.data['data_path'],exist_ok=True)
         os.makedirs(self.data['log_path'],exist_ok=True)
         self.read_key()
+        
+    def set_log(self):
         # set loglevel
         self.logger = getLogger(__name__)
         self.logger.setLevel(self.data['loglevel'])
@@ -72,13 +74,11 @@ class config:
         for key in self.data.keys():
             tmp_data += f'"{key}"{self.delimita}"' + str(self.data[key]) + '"\n'
         open(self.setting_path,"w",encoding="utf-8").write(tmp_data)
-        self.write_log(f"created a settingfile: {self.setting_path}",species="INFO")
     
     def set_id(self,id_line,pwd_line):
         self.data["id"] = self.__enc.encrypt(id_line)
         self.data["pwd"]  = self.__enc.encrypt(pwd_line)
         self.write_data()
-        self.write_log(f"id was setted",species="INFO")
     
     def get_id(self):
         if self.data["id"]:
@@ -89,7 +89,6 @@ class config:
     def del_id(self):
         self.del_data("id")
         self.del_data("pwd")
-        self.write_log(f"id was deleted",species="INFO")
     
     def write_log(self,text,type=-1,species=""):
         log_species = {
@@ -117,3 +116,11 @@ class config:
     
     def get_date_str_ymdhms(self):    
         return dt.now().strftime('%Y/%m/%d %H:%M:%S')
+    
+    def log_exception(self,func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                self.write_log(str(e),species="ERROR")
+        return wrapper

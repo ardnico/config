@@ -54,6 +54,7 @@ class config:
     
     def set_data(self,key,value):
         self.data[key] = value
+        self.write_data()
     
     def get_data(self,key):
         try:

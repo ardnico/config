@@ -71,11 +71,13 @@ class config:
         for key in self.data.keys():
             tmp_data += f'"{key}"{self.delimita}"' + str(self.data[key]) + '"\n'
         open(self.setting_path,"w",encoding="utf-8").write(tmp_data)
+        self.write_log(f"created a settingfile: {self.setting_path}",species="INFO")
     
     def set_id(self,id_line,pwd_line):
         self.data["id"] = self.__enc.encrypt(id_line)
         self.data["pwd"]  = self.__enc.encrypt(pwd_line)
         self.write_data()
+        self.write_log(f"id was setted",species="INFO")
     
     def get_id(self):
         if self.data["id"]:
@@ -86,6 +88,7 @@ class config:
     def del_id(self):
         self.del_data("id")
         self.del_data("pwd")
+        self.write_log(f"id was deleted",species="INFO")
     
     def write_log(self,text,type=-1,species=""):
         log_species = {

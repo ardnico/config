@@ -6,7 +6,7 @@ from logging import getLogger, Formatter
 from .encrypter import Enc
 
 class config:
-    __enc = Enc()
+    enc = Enc()
     def __init__(self,delimita=":::",name=__name__,):
         self.data = {
         "loglevel"  :0,
@@ -25,7 +25,7 @@ class config:
     def set_log(self):
         # set loglevel
         self.logger = getLogger(__name__)
-        self.logger.setLevel(self.data['loglevel'])
+        self.logger.setLevel(int(self.data['loglevel'])*10)
         # Streamハンドラクラスをインスタンス化
         st_handler = logging.StreamHandler()
         # Fileハンドラクラスをインスタンス化
@@ -50,7 +50,7 @@ class config:
             if td[0]=="KEY":
                 continue
             try:
-                self.data[td[0]] = int(td[1])
+                self.data[td[0]] = int(float(td[1]))
             except:
                 self.data[td[0]] = td[1]
     
@@ -76,13 +76,13 @@ class config:
         open(self.setting_path,"w",encoding="utf-8").write(tmp_data)
     
     def set_id(self,id_line,pwd_line):
-        self.data["id"] = self.__enc.encrypt(id_line)
-        self.data["pwd"]  = self.__enc.encrypt(pwd_line)
+        self.data["id"] = self.enc.encrypt(id_line)
+        self.data["pwd"]  = self.enc.encrypt(pwd_line)
         self.write_data()
     
     def get_id(self):
         if self.data["id"]:
-            return  self.__enc.decrypt(self.data["id"]),self.__enc.decrypt(self.data["pwd"])
+            return  self.enc.decrypt(self.data["id"]),self.enc.decrypt(self.data["pwd"])
         else:
             return None,None
     
@@ -123,4 +123,7 @@ class config:
                 return func(*args, **kwargs)
             except Exception as e:
                 self.write_log(str(e),species="ERROR")
+                # msg = messsagebox.show_warning( message=str(e) )
+                # if msg=="Retry":
+                #     wrapper(*args, **kwargs)
         return wrapper

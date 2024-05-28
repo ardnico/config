@@ -7,21 +7,23 @@ from .encrypter import Enc
 
 class config:
     enc = Enc()
-    def __init__(self,delimita=":::",name=__name__,):
+    def __init__(self
+            ,delimita   = ":::"
+            ,name       = __name__
+        ):
         self.data = {
-        "loglevel"  :0,
-        "encrypt"   :0,
-        "work_dir"   :0,
-        "data_path" : f"{os.getcwd()}\\data",
-        "log_path" : f"{os.getcwd()}\\log",
+        "loglevel"      : 0,
+        "work_dir"      : 0,
+        "data_path"     : f"{os.getcwd()}\\data",
+        "log_path"      : f"{os.getcwd()}\\log",
         }
-        self.delimita = delimita
-        self.setting_path = os.path.join(self.data['data_path'] , "setting.data")
-        self.log_name = os.path.join(self.data['log_path'],name+".log")
-        os.makedirs(self.data['data_path'],exist_ok=True)
-        os.makedirs(self.data['log_path'],exist_ok=True)
+        self.delimita       = delimita
+        self.setting_path   = os.path.join( self.data['data_path'], "setting.data" )
+        self.log_name       = os.path.join( self.data['log_path'], name+".log" )
+        os.makedirs(self.data['data_path']  ,exist_ok=True )
+        os.makedirs(self.data['log_path']   ,exist_ok=True )
         self.read_key()
-        
+    
     def set_log(self):
         # set loglevel
         self.logger = getLogger(__name__)
@@ -53,6 +55,10 @@ class config:
                 self.data[td[0]] = int(float(td[1]))
             except:
                 self.data[td[0]] = td[1]
+    
+    def chk_data(self,key,default=""):
+        if key not in list(self.data.keys()):
+            self.set_data(key,default)
     
     def set_data(self,key,value):
         self.data[key] = value
